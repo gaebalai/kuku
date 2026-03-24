@@ -1,6 +1,7 @@
 # kuku 「쿠쿠」
 
 AI-driven software development harness workflow orchestrator. Claude Code / Codex / Gemini CLI의 스킬을 워크플로우 YAML에 따라 실행한다.
+참고로 쿠쿠란 말은 제주도 방언으로 '호호'라고 하는 말로 웃으며 작업하자는 의미로 쿠쿠라고 정했습니다.
 
 > **V7 (kuku_harness)이 현재 정규 엔트리 포인트입니다.** `legacy/`는 V5/V6의 참조용 아카이브이며, 지원 대상 외입니다.
 
