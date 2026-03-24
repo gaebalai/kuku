@@ -1,0 +1,68 @@
+[project]
+name = "kuku"
+version = "1.0.0"
+description = "AI-driven software development harness workflow orchestrator "
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+    {name = "apokamo"}
+]
+keywords = ["ai", "agent", "workflow", "orchestrator", "claude", "codex", "gemini"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "setuptools>=77.0.0",
+    "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+kuku = "kuku_harness.cli_main:main"
+
+[build-system]
+requires = ["setuptools>=77.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kuku_harness*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short -n auto"
+markers = [
+    "small: Small tests - no external dependencies",
+    "medium: Medium tests - file I/O, mock processes",
+    "large: Large tests - real CLI, E2E",
+]

@@ -1,0 +1,86 @@
+# Bugfix Agent v5 Configuration
+#
+# 이파일로에이전트의동작설정를관리합니다.
+# 환경변수 BUGFIX_AGENT_CONFIG 로 경로를덮어쓰기가능.
+
+[agent]
+# 작업디렉토리(空문자의 경우는리포지토리루트를자동検出)
+workdir = ""
+
+# 각ループ의 최대再試행회수(Circuit Breaker)
+max_loop_count = 5
+
+# 스테이트전이間のスリープ時間(초)- レートリミット대책
+state_transition_delay = 1.0
+
+# CLI 출력를リアルタイム표시한다인가
+verbose = true
+
+[tools]
+# 컨텍스트파일읽기의최대문자수(Codex 용)
+context_max_chars = 4000
+
+# 각도구의 타임아웃(초)- 0 で無제한
+[tools.codex]
+model = "gpt-5.1-codex-max"
+sandbox = "workspace-write"
+timeout = 900 # 15분
+
+[tools.gemini]
+model = "gemini-2.5-pro"
+timeout = 900 # 15분
+
+[tools.claude]
+model = "opus"
+permission_mode = "default"
+timeout = 1800 # 30분(구현태스크는時間がかかる)
+
+[logging]
+# 로그출력先のベース디렉토리
+# ⚠️ 現状未구현: 이설정값는読み込まれていません
+# 実際의 출력선는 AgentContext のハード코드값 "test-artifacts/bugfix-agent" 로 고정
+artifacts_base = "test-artifacts/bugfix-agent"
+
+[github]
+# Issue 코멘트投稿의 최대리트라이회수
+max_comment_retries = 2
+# 리트라이間隔(초)
+retry_delay = 1.0
+
+[states.INIT]
+agent = "claude" # 사용한다AI도구: "gemini" | "codex" | "claude"
+model = "opus"
+# model 과 timeout 는 지정가 없ければ tools.gemini 부터상속
+
+[states.INVESTIGATE]
+agent = "claude"
+model = "opus"
+timeout = 600 # 이스테이트만타임아웃를덮어쓰기
+
+[states.INVESTIGATE_REVIEW]
+agent = "codex"
+model = "gpt-5.2" # 이스테이트만모델를덮어쓰기
+timeout = 300
+
+[states.DETAIL_DESIGN]
+agent = "claude"
+model = "opus" # 복잡한 설계태스크에Opus를 사용
+timeout = 900
+
+[states.DETAIL_DESIGN_REVIEW]
+agent = "codex"
+model = "gpt-5.2" #
+
+[states.IMPLEMENT]
+agent = "claude"
+model = "opus"
+timeout = 1800 # 구현에30분
+
+[states.IMPLEMENT_REVIEW]
+agent = "codex"
+model = "gpt-5.2"
+timeout = 600
+
+[states.PR_CREATE]
+agent = "claude"
+model = "sonnet"

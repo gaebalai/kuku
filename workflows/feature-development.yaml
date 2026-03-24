@@ -1,0 +1,112 @@
+name: feature-development
+description: |
+  Issue의 설계부터 PR 생성까지의 개발 워크플로우.
+  issue-create / issue-start는 사전에 수동 실행 완료된 것이 전제.
+execution_policy: auto
+
+cycles:
+  design-review:
+    entry: review-design
+    loop: [fix-design, verify-design]
+    max_iterations: 3
+    on_exhaust: ABORT
+  code-review:
+    entry: review-code
+    loop: [fix-code, verify-code]
+    max_iterations: 3
+    on_exhaust: ABORT
+
+steps:
+  - id: design
+    skill: issue-design
+    agent: claude
+    model: opus
+    effort: high
+    on:
+      PASS: review-design
+      ABORT: end
+
+  - id: review-design
+    skill: issue-review-design
+    agent: codex
+    model: gpt-5.4
+    effort: high
+    on:
+      PASS: implement
+      RETRY: fix-design
+      ABORT: end
+
+  - id: fix-design
+    skill: issue-fix-design
+    agent: claude
+    model: opus
+    resume: design
+    on:
+      PASS: verify-design
+      ABORT: end
+
+  - id: verify-design
+    skill: issue-verify-design
+    agent: codex
+    model: gpt-5.4
+    effort: high
+    on:
+      PASS: implement
+      RETRY: fix-design
+      ABORT: end
+
+  - id: implement
+    skill: issue-implement
+    agent: claude
+    model: opus
+    on:
+      PASS: review-code
+      RETRY: implement
+      BACK: design
+      ABORT: end
+
+  - id: review-code
+    skill: issue-review-code
+    agent: codex
+    model: gpt-5.4
+    effort: high
+    on:
+      PASS: doc-check
+      RETRY: fix-code
+      BACK: design
+      ABORT: end
+
+  - id: fix-code
+    skill: issue-fix-code
+    agent: claude
+    model: opus
+    inject_verdict: true
+    on:
+      PASS: verify-code
+      ABORT: end
+
+  - id: verify-code
+    skill: issue-verify-code
+    agent: codex
+    model: gpt-5.4
+    effort: high
+    on:
+      PASS: doc-check
+      RETRY: fix-code
+      ABORT: end
+
+  - id: doc-check
+    skill: issue-doc-check
+    agent: claude
+    model: opus
+    on:
+      PASS: pr
+
+  - id: pr
+    skill: issue-pr
+    agent: claude
+    model: sonnet
+    on:
+      PASS: end
+      RETRY: pr
+      ABORT: end

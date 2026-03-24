@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n [u3040-u309Fu30A0-u30FFu4E00-u9FFF] /Users/gaebalai/MDRules/kuku/docs/dev/skill-authoring.md)"
+    ]
+  }
+}

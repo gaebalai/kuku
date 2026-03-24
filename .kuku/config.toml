@@ -1,0 +1,9 @@
+# kuku configuration for kuku's own repository.
+# See: draft/design/issue-70-colocated-model.md
+
+[paths]
+artifacts_dir = ".kuku-artifacts"
+skill_dir = ".claude/skills"
+
+[execution]
+default_timeout = 1800
